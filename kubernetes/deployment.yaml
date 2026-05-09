@@ -13,7 +13,11 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 25%
+      # maxUnavailable: 0 ensures no capacity loss during rolling updates.
+      # maxSurge: 1 allows one extra pod so the new RS can schedule before the old one terminates.
+      # Together with DoNotSchedule topology spread + matchLabelKeys, this prevents
+      # rolling update deadlock when replicas == node count.
+      maxUnavailable: 0
       maxSurge: 1
   template:
     metadata:
@@ -61,9 +65,16 @@ spec:
       imagePullSecrets:
         - name: registry-credentials-limited-access-gitlab
       topologySpreadConstraints:
+        # DoNotSchedule: hard constraint - pods stay Pending rather than stack on one node.
+        # matchLabelKeys scopes the constraint per ReplicaSet so the surge pod during a
+        # rolling update (new RS, 0 peers of its own) is not blocked by this constraint.
+        # WARNING: removing matchLabelKeys while DoNotSchedule is set will deadlock rolling
+        # updates when replicas == node count (surge pod has nowhere to schedule).
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: ScheduleAnyway
+          whenUnsatisfiable: DoNotSchedule
           labelSelector:
             matchLabels:
               app: technotim-docs
+          matchLabelKeys:
+            - pod-template-hash
