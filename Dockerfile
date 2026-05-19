@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM cgr.dev/chainguard/nginx
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY _site /usr/share/nginx/html
