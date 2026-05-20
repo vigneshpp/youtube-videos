@@ -4,14 +4,16 @@ title: "Migrate Your Databases to Kubernetes and Docker"
 date: 2020-10-17 09:00:00 -0500
 categories: self-hosted
 tags: homelab rancher kubernetes docker self-hosted mysql database portainer
+image:
+  path: /assets/img/headers/library-floors.webp
+  lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAUACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APVPDCztB4psr67uJn0nxF8NrSG5sbm9spG1fxra6ncXOslbm71JVFtKVdtPGYblg7LLau0bRfIxpRq2UUo3dVXlFT0pPktypQi+ZbNptLR8+59FKXs0pSvONqPuRlKH8aM01zOU39q8rWUnfSNzrPFXwoudD8T+I9EtfHfjI2uj69rGl2x/4SjxrHmDT9QuLSH93H4vWOP93CvyRqqJ91AFAFc9Nc9OnNyd5wjJ2p4a15RTdr4du133ZbnKLcU5Wi7fxK3TT/n4f//Z
+
 ---
+Have you been putting off migrating your database to Docker and Kubernetes like I have?  Well wait no longer.It's simple using this step-by-step tutorial.Today, we'll move a database that's on a virtual machine to a container that's running in kubernetes.Oh yeah, this will also work if it's a bare metal server too, duh.🙂
 
-[![Migrate Your Databases to Kubernetes and Docker](https://img.youtube.com/vi/jZvnkf_HgcY/0.jpg)](https://www.youtube.com/watch?v=jZvnkf_HgcY "Migrate Your Databases to Kubernetes and Docker")
+{% include embed/youtube.html id='jZvnkf_HgcY' %}
 
-Have you been putting off migrating your database to Docker and Kubernetes like I have?  Well wait no longer.  It's simple using this step-by-step tutorial.  Today, we'll move a database that's on a virtual machine to a container that's running in kubernetes.  Oh yeah, this will also work if it's a bare metal server too, duh.  🙂
-
-[Watch Video](https://www.youtube.com/watch?v=jZvnkf_HgcY)
-
+📺 [Watch Video](https://www.youtube.com/watch?v=jZvnkf_HgcY)
 
 `mysql_backup.sh`
 
@@ -32,3 +34,11 @@ for db in $databases; do
   $MYSQLDUMP --host $MYSQL_HOST --port $MYSQL_PORT --force --opt --user=$MYSQL_USER -p$MYSQL_PASSWORD --databases $db | gzip > "$BACKUP_DIR/$db.gz"
 done
 ```
+
+## Links
+
+🛍️ Check out the new Merch Shop at <https://l.technotim.com/shop>
+
+⚙️ See all the hardware I recommend at <https://l.technotim.com/gear>
+
+🚀 Don't forget to check out the [🚀Launchpad repo](https://l.technotim.com/quick-start) with all of the quick start source files

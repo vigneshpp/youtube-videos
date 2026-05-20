@@ -3,28 +3,33 @@
 # Import the theme
 theme: jekyll-theme-chirpy
 
-# Only if your site type is GitHub Project sites and doesn't have a custom domain,
-# change below value to '/projectname'.
-baseurl: ''
+# Change the following value to '/PROJECT_NAME' ONLY IF your site type is GitHub Pages Project sites
+# and doesn't have a custom domain.
+baseurl: ""
 
-# the HTML language tag › https://www.w3.org/International/questions/qa-choosing-language-tags
-lang: en-US
+# The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
+# If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
+# otherwise, the layout language will use the default value of 'en'.
+lang: en
+
+# Additional parameters for datetime localization, optional. › https://github.com/iamkun/dayjs/tree/dev/src/locale
+prefer_datetime_locale:
 
 # Change to your timezone › http://www.timezoneconverter.com/cgi-bin/findzone/findzone
 timezone: America/Chicago
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
-# --------------------------
+# ↓ --------------------------
+
 title: Techno Tim                          # the main title
 
-tagline: Video documentation for all your copy pasta needs!   # it will display as the sub-title
+tagline: Engineer. Builder. Creator. From Code to Cloud   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  Documentation for Techno Tim videos
-  for all your copy pasta needs!
+ Techno Tim Home - Documentation and More
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
-url: 'https://techno-tim.github.io'
+url: 'https://technotim.com'
 
 github:
   username: timothystewart6             # change to your github username
@@ -39,7 +44,7 @@ instagram:
 facebook:
   username: TechnoTimLive
 discord:
-  invitelink: DJKexrJ
+  invitelink: akMB4HJpvF
 youtube:
   channelid: UCOk-gHyjcWZNj3Br4oxwh0A
 tiktok:
@@ -51,26 +56,22 @@ social:
   # email: example@doamin.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/technotimlive      # change to your twitter homepage
-    # - https://github.com/techno-tim       # change to your github homepage
-    # - https://twitch.tv/technotim
+    - https://l.technotim.com/twitter      # change to your twitter homepage
+    # - https://github.com/username       # change to your github homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
 
-google_site_verification: google_meta_tag_verification # change to your verification string
-# --------------------------
 
-google_analytics:
-  id: 'G-NZ5V7DM8F5'          # Fill with your Google Analytics ID
-  pv:
-    # The Google Analytics pageviews switch.
-    # DO NOT enable it unless you know how to deploy the Google Analytics superProxy.
-    enabled: false
-    # the next options only valid when `google_analytics.pv` is enabled.
-    proxy_url: ''
-    proxy_endpoint: ''
-    cache: false  # pv data local cache, good for the users from GFW area.
+# ↑ --------------------------
+# The end of `jekyll-seo-tag` settings
+
+# Web Analytics Settings
+analytics:
+  google:
+    id: 'G-NZ5V7DM8F5'          # Fill with your Google Analytics ID
+  goatcounter:
+    id: # fill in your GoatCounter ID
 
 # Prefer color scheme setting.
 #
@@ -83,14 +84,15 @@ google_analytics:
 #     light  - Use the light color scheme
 #     dark   - Use the dark color scheme
 #
-theme_mode:   dark # [light|dark]
+# theme_mode: dark # [light | dark]
 
 # The CDN endpoint for images.
 # Notice that once it is assigned, the CDN url
 # will be added to all image (site avatar & posts' images) paths starting with '/'
 #
 # e.g. 'https://cdn.com'
-img_cdn: ''
+img_cdn: https://images.technotim.com
+cdn: https://images.technotim.com
 
 # the avatar on sidebar, support local or CORS resources
 avatar: https://avatars.githubusercontent.com/u/1322205?s=400&u=5b4f2219006577dc0426007fe5a02391c4899677&v=4
@@ -98,9 +100,43 @@ avatar: https://avatars.githubusercontent.com/u/1322205?s=400&u=5b4f2219006577dc
 # boolean type, the global switch for ToC in posts.
 toc: true
 
-disqus:
-  comments: false  # boolean type, the global switch for posts comments.
-  shortname: ''    # Fill with your Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
+comments:
+  active: giscus        # The global switch for posts comments, e.g., 'disqus'.  Keep it empty means disable
+  # The active options are as follows:
+  disqus:
+    shortname:    # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
+  # utterances settings › https://utteranc.es/
+  utterances:
+    repo:         # <gh-username>/<repo>
+    issue_term:   # < url | pathname | title | ...>
+  # Giscus options › https://giscus.app
+  giscus:
+    repo: timothystewart6/techno-tim.github.io
+    repo_id: MDEwOlJlcG9zaXRvcnkyNTQ3ODQ3Nzk
+    category: Comments
+    category_id: DIC_kwDODy-1C84CSN7z
+    mapping: pathname          # optional, default to 'pathname'
+    input_position: bottom  # optional, default to 'bottom'
+    lang: en            # optional, default to the value of `site.lang`
+    reactions_enabled: 1
+
+# Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
+assets:
+  self_host:
+    enabled:      # boolean, keep empty means false
+    # specify the Jekyll environment, empty means both
+    # only works if `assets.self_host.enabled` is 'true'
+    env:          # [development|production]
+
+pwa:
+  enabled: false # the option for PWA feature (installable)
+  cache:
+    enabled: false # the option for PWA offline cache
+    # Paths defined here will be excluded from the PWA cache.
+    # Usually its value is the `baseurl` of another website that
+    # shares the same domain name as the current website.
+    deny_paths:
+      # - "/example"  # URLs match `<SITE_URL>/example/*` will not be cached by the PWA
 
 paginate: 10
 
@@ -108,7 +144,7 @@ paginate: 10
 
 kramdown:
   syntax_highlighter: rouge
-  syntax_highlighter_opts:   # Rouge Options › https://github.com/jneen/rouge#full-options
+  syntax_highlighter_opts: # Rouge Options › https://github.com/jneen/rouge#full-options
     css_class: highlight
     # default_lang: console
     span:
@@ -117,38 +153,36 @@ kramdown:
       line_numbers: true
       start_line: 1
 
-# DO NOT change this unless you're a Pro user on Jekyll and Web development,
-# Or you think you're smart enough to change other relevant URLs within this template.
-permalink: /posts/:title/
-
 collections:
   tabs:
     output: true
     sort_by: order
 
-
 defaults:
-  -
-    scope:
-      path: ''          # An empty string here means all files in the project
+  - scope:
+      path: "" # An empty string here means all files in the project
       type: posts
     values:
       layout: post
-      comments: true    # Enable comments in posts.
-      toc: true         # Display TOC column in posts.
-  -
-    scope:
+      comments: true # Enable comments in posts.
+      toc: true # Display TOC column in posts.
+      # DO NOT modify the following parameter unless you are confident enough
+      # to update the code of all other post links in this project.
+      permalink: /posts/:title/
+  - scope:
       path: _drafts
     values:
       comments: false
-  -
-    scope:
-      path: ''
-      type: tabs             # see `site.collections`
+  - scope:
+      path: ""
+      type: tabs # see `site.collections`
     values:
       layout: page
       permalink: /:title/
-      dynamic_title: true    # Hide title in mobile screens.
+  - scope:
+      path: assets/js/dist
+    values:
+      swcache: true
 
 sass:
   style: compressed
@@ -163,21 +197,20 @@ compress_html:
     envs: [development]
 
 exclude:
-  - vendor
-  - Gemfile
-  - Gemfile.lock
-  - '*.gem'
-  - '*.gemspec'
-  - tools
+  - "*.gem"
+  - "*.gemspec"
   - docs
+  - tools
   - README.md
   - LICENSE
-  - gulpfile.js
+  - rollup.config.js
   - node_modules
-  - package.json
-  - package-lock.json
+  - package*.json
   - archive_old
-  - template- reference_files
+  - template
+  - reference_files
+  - kubernetes
+  - Dockerfile
 
 jekyll-archives:
   enabled: [categories, tags]
@@ -187,11 +220,3 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
-
-plugins:
-  - "jekyll-get-json"
-
-jekyll_get_json:
-  - data: github
-    json: 'https://api.github.com/repos/techno-tim/techno-tim.github.io'
-    cache: true

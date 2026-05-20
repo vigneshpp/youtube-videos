@@ -15,14 +15,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b  # 3.2.2
+
         with:
           fetch-depth: 0  # for posts's lastmod
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@2654679fe7f7c29875c669398a8ec0791b8a64a1  # 1.215.0
         with:
-          ruby-version: 2.7
+          ruby-version: 3.3.6
           bundler-cache: true
 
       - name: Check baseurl
@@ -32,22 +33,5 @@ jobs:
             echo "BASE_URL=$baseurl" >> $GITHUB_ENV
           fi
 
-      - name: Build Site
-        env:
-          JEKYLL_ENV: production
-        run: |
-          bundle exec jekyll b -d "_site$BASE_URL"
-
-      - name: Test Site
-        run: |
-          bash tools/test.sh
-
       - name: Deploy
-        run: |
-          if [[ -n $BASE_URL ]]; then
-            mv _site$BASE_URL _site-rename
-            rm -rf _site
-            mv _site-rename _site
-          fi
-
-          bash tools/deploy.sh
+        run: bash tools/release.sh

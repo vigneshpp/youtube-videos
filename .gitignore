@@ -18,3 +18,49 @@ _site
 .jekyll-cache
 .jekyll-metadata
 vendor
+yarn*
+.bundle
+!.travis.yml
+
+# hidden files
+.*
+!.git*
+!.editorconfig
+!.nojekyll
+!.travis.yml
+!.markdownlint.yaml
+
+# bundler cache
+.bundle
+_site
+vendor
+
+# Jekyll cache
+.jekyll-cache
+_site
+
+# RubyGems
+*.gem
+
+# npm dependencies
+node_modules
+package-lock.json
+
+!.husky
+!.commitlintrc.json
+!.versionrc.json
+
+# IDE configurations
+.idea
+.vscode
+
+# Images served from Cloudflare R2
+assets/img/headers/
+assets/img/posts/
+
+# Misc
+assets/js/dist
+
+tmp/
+
+.github/copilot

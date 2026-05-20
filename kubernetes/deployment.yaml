@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: technotim-docs
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: technotim-docs
+  replicas: 3
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # maxUnavailable: 0 ensures no capacity loss during rolling updates.
+      # maxSurge: 1 allows one extra pod so the new RS can schedule before the old one terminates.
+      # Together with DoNotSchedule topology spread + matchLabelKeys, this prevents
+      # rolling update deadlock when replicas == node count.
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: technotim-docs
+      annotations:
+        deploy-date: "deploy-date-value"
+    spec:
+      containers:
+        - name: technotim-docs
+          image: "registry-value:latest"
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          ports:
+            - containerPort: 80
+              name: http
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 1
+            failureThreshold: 30
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            failureThreshold: 3
+            timeoutSeconds: 2
+            successThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 2
+      imagePullSecrets:
+        - name: registry-credentials-limited-access-gitlab
+      topologySpreadConstraints:
+        # DoNotSchedule: hard constraint - pods stay Pending rather than stack on one node.
+        # matchLabelKeys scopes the constraint per ReplicaSet so the surge pod during a
+        # rolling update (new RS, 0 peers of its own) is not blocked by this constraint.
+        # WARNING: removing matchLabelKeys while DoNotSchedule is set will deadlock rolling
+        # updates when replicas == node count (surge pod has nowhere to schedule).
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: technotim-docs
+          matchLabelKeys:
+            - pod-template-hash

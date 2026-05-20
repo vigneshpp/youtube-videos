@@ -4,19 +4,21 @@ title: "How to Upgrade, Backup, and Restore Rancher 2"
 date: 2020-06-27 09:00:00 -0500
 categories: kubernetes rancher
 tags: homelab rancher kubernetes
+image:
+  path: /assets/img/headers/floppy-black.webp
+  lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAUACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/AP3z/ar+HkmuftLfAnX08f8AxU0BtPvPAkthoHhT4meOvC3gu9/srx/cX/iKPxl4K8PeIdM8M+PIfFOjTw+HpIPEmmXUNhaW/mPHqMTizj/U6ftJYvCzVetTjTnf2dOpOFOpeUXJVIKSjUTXu+9F2V7aNp/i+IeHo4fEU54SjXniY0/Z4ipKp7XCuLnd0eWcYe/ze8pwafLF2uk19Fy2FuJJBtHDuOn+0a+zi5uKfO1dJ27aHzbpJNrTf+VH/9k=
+
 ---
 
-[![How to Upgrade, Backup, and Restore Rancher 2](https://img.youtube.com/vi/YWqBxCIfxw4/0.jpg)](https://www.youtube.com/watch?v=YWqBxCIfxw4 "How to Upgrade, Backup, and Restore Rancher 2")
+It use to be hard to back up Rancher, but with Rancher 2 it's super simple.Upgrading, backing up, and restoring your Rancher server should be part of your regular routine.Join me in this tutorial as we walk through backing up, upgrading, and restoring a single node Rancher Docker install in just a couple of minutes.Trust me, you'll feel better after you do.
 
-It use to be hard to back up Rancher, but with Rancher 2 it's super simple.  Upgrading, backing up, and restoring your Rancher server should be part of your regular routine.  Join me in this tutorial as we walk through backing up, upgrading, and restoring a single node Rancher Docker install in just a couple of minutes.  Trust me, you'll feel better after you do.
+{% include embed/youtube.html id='YWqBxCIfxw4' %}
 
-[Watch Video](https://www.youtube.com/watch?v=YWqBxCIfxw4)
+📺 [Watch Video](https://www.youtube.com/watch?v=YWqBxCIfxw4)
 
+* Need to install Rancher?  See my guide <https://www.youtube.com/watch?v=YWqBxCIfxw4>
 
-
-* Need to install Rancher?  See my guide https://www.youtube.com/watch?v=YWqBxCIfxw4
-
-* See the full guide from Rancher https://rancher.com/docs/rancher/v2.x/en/upgrades/upgrades/single-node/
+* See the full guide from Rancher <https://rancher.com/docs/rancher/v2.x/en/upgrades/upgrades/single-node/>
 
 ## Upgrade & Backup Outline
 
@@ -27,20 +29,17 @@ It use to be hard to back up Rancher, but with Rancher 2 it's super simple.  Upg
 * Verify the Upgrade
 * Clean up your old Rancher server container
 
-
 See all containers
 
 ```bash
 docker ps
 ```
 
-
 See all containers including stopped ones
 
 ```bash
 docker ps -a
 ```
-
 
 Stop the container
 
@@ -66,7 +65,6 @@ Run `ls` and you should see your tarball
 ```bash
 rancher-data-backup-v2.4.3-2020-06-21.tar.gz
 ```
-
 
 Pull a new docker image
 
@@ -116,12 +114,7 @@ Start the container
 docker start <RANCHER_CONTAINER_NAME>
 ```
 
-
-
-
-
 ## Unofficial Way
-
 
 ### Backup
 
@@ -149,7 +142,6 @@ sudo mv rancher-data-backup-VERSION-DATE-unofficial.tar.gz ~/
 
 ### Restore
 
-
 ```bash
 cd /opt
 ```
@@ -167,7 +159,6 @@ sudo tar xzpf rancher-data-backup-VERSION-DATE-unofficial.tar.gz
 ```bash
  docker start rancher_docker_server
 ```
-
 
 ### Backup script
 
@@ -202,10 +193,17 @@ docker start rancher_docker_server_$RANCHER_TAG
 
 ```
 
-
 ### upgrading to a new version
 
 ```bash
 NEW_VERSION_TAG=v2.4.8
 docker run -d --restart=unless-stopped -p 9090:80 -p 9091:443 --privileged -v /opt/rancher:/var/lib/rancher --name=rancher_docker_server_$NEW_VERSION_TAG rancher/rancher:$NEW_VERSION_TAG
 ```
+
+## Links
+
+🛍️ Check out the new Merch Shop at <https://l.technotim.com/shop>
+
+⚙️ See all the hardware I recommend at <https://l.technotim.com/gear>
+
+🚀 Don't forget to check out the [🚀Launchpad repo](https://l.technotim.com/quick-start) with all of the quick start source files

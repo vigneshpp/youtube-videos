@@ -4,18 +4,18 @@ title: "I Heard You Like GPUs in Servers... GPU Passthrough on Linux and Docker"
 date: 2020-10-10 09:00:00 -0500
 categories: homelab
 tags: homelab rancher kubernetes docker portainer nvidia hardware
+image:
+  path: /assets/img/headers/gpu-pc.webp
+  lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAUACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APxP+GXgr4aeHviV4V8e2XgyC20v/hKPEOp+OPD9pB4Sl1DxveJ448V3ViJPEuv+CvELaLZ22lC20u6srfR7uHVbiE6rf+ZMLa3tP3jDYfJsn4+p0MLkuFxGWvMPY08rzOtiMbhqdGryUnDnU6FeTi6ntYzdVNThHorGmMoY2jkGcxp5hyVv7LoVZ4uOCwv1iTnWTj7Oc41PqzTgo1J4b2U6tKVSjKShUmn+nlj+yr8GfENjZ6+9h4nt31y1t9YaBtZ0aUwNqcKXrQmWLwtaRSGMzlDJHa20bldyW8KkRr9tm08C81zN08lyWhTeYYx06FLKsujSoweJqctKlH6r7tOnG0ILpFJHw+DhUWDwiqYrGVaiw1BTqyxmLUqk1SjzVGvbuznK8mrvV7n/2Q==
 ---
 
-[![I Heard You Like GPUs in Servers... GPU Passthrough on Linux and Docker](https://img.youtube.com/vi/9OfoFAljPn4/0.jpg)](https://www.youtube.com/watch?v=9OfoFAljPn4 "I Heard You Like GPUs in Servers... GPU Passthrough on Linux and Docker")
+We've already figured out how to pass through a GPU to Windows machine but why let Windows have all the fun?  Today, we do it on an Ubuntu headless server that's virtualized, run some AI and Deep Learning workloads, then turn up the transcoding on Plex to 11.
 
-Do you have a lot of virtual machines?  Are you running Windows, Linux, and Mac and need remote access from a single UI?  Well, Apache Guacamole is for you!  Apache Guacamole is a clientless remote access gateway that give you a web portal to access any of your clients over standard protocols like VNC, RDP, SSH, TELNET, and more. Join me in this step by step tutorial as we set up a self-hosted version of Guacamole in your homelab.  As an added bonus, we'll set up 2FA (multifactor authentication) to help secure Guacamole.  Oh, yeah, and we'll do this all in Docker and or Kubernetes, it's up to you!  :)
+{% include embed/youtube.html id='9OfoFAljPn4' %}
 
+📺 [Watch Video](https://www.youtube.com/watch?v=9OfoFAljPn4)
 
-[Watch Video](https://www.youtube.com/watch?v=9OfoFAljPn4)
-
-
-
-```
+```text
 88          88                                      
 88          ""                                      
 88                                                  
@@ -28,16 +28,13 @@ Do you have a lot of virtual machines?  Are you running Windows, Linux, and Mac 
                              "Y8bbdP"               
 ```
 
-
-
-If you need to passthrough a GPU, follow [this guide](https://github.com/techno-tim/youtube-videos/tree/master/gpu-passthrough) but install Ubuntu instead.
-
+If you need to passthrough a GPU, follow [this guide](/posts/gpu-passthrough/) but install Ubuntu instead.
 
 ## Proxmox
+
 Shut down your VM in proxmox, edit your conf file, it should be here (note, change path to your VM's ID)
 
 `/etc/pve/qemu-server/100.conf`
-
 
 add `cpu: host,hidden=1,flags=+pcid` to that file
 
@@ -65,15 +62,14 @@ Then install `nvtop`
 sudo apt-get install nvtop
 ```
 
-
-## tensorflow workload 
+## tensorflow workload
 
 ```bash
 nvidia-docker run --rm -ti tensorflow/tensorflow:r0.9-devel-gpu
 ```
 
-
 ## Rancher / Kubernetes
+
 In your Rancher server (or kubernetes host)
 
 ```bash
@@ -122,3 +118,10 @@ Then, using `kubectl` on your kubernetes / rancher host
 kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/master/nvidia-device-plugin.yml
 ```
 
+## Links
+
+🛍️ Check out the new Merch Shop at <https://l.technotim.com/shop>
+
+⚙️ See all the hardware I recommend at <https://l.technotim.com/gear>
+
+🚀 Don't forget to check out the [🚀Launchpad repo](https://l.technotim.com/quick-start) with all of the quick start source files

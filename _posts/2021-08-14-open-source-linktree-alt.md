@@ -1,0 +1,127 @@
+---
+layout: post
+title: "Self-Hosted, DIY, Open Source Alternative to Linktree"
+date: 2021-08-14 11:00:00 -0500
+categories: self-hosted
+tags: homelab pi-hole dns littlelink-server portainer self-hosted docker rancher
+image:
+  path: /assets/img/headers/tree-colorful.webp
+  lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAUACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APjz9n7wt8R9V+F/g690r4y+KND8PJ4q8f2+m+Cjaf2j4c0+1+z2um60Et31K1k+167DqqC7vrVrKVUsod4uJ1t7m1/nnxnzDAR8X8yyTNsiy3OcwXAnC+YVOIa9OOHzKdOHEPE9fL8BBUYezhhMvxeTVMbSjN1pSxOPqyjKlTg6db4TwVeF4mzz/UrMMFRqYHEyxGW5tKpPEVKGbU8zyHI6ePeJwMKtGlGGIwValgnCFTnhTw9OcKqlouQ12xfT9b1mwm07wfey2Wq6haS3knhy/SS7ktruaF7l0/4SOTY87IZWXe+0uRvbGT7mVYXNMTleW4ilxBmWGpYjAYOtSw6hgqioU6uHp1IUVP6tDnVKMlBT5Ic3Lfljey+1zXjN8LZnmPDGByuE8Fw5j8ZkODnPMcw5pYXKMRUy/Dylz1as+aVLDwb5qlSV2+ac3eT/AP/Z
+
+---
+
+Meet LittleLink & LittleLink-Server  - a DIY, self hosted, and open source alternative to the popular service Linktree.This web site inside of a container allows you to create and host your own web site with all of your social information and links, giving your followers multiple ways to connect with you!  In this video we talk about what LittleLink-Server is, what it does, and how to create your own site using this Docker container with only a few environment variables, no knowledge of web development required.Be sure to check the documentation for details!
+
+{% include embed/youtube.html id='42SqfI_AjXU' %}
+
+📺 [Watch Video](https://www.youtube.com/watch?v=42SqfI_AjXU)
+
+## Docker Setup
+
+See [this post](/posts/docker-compose-install/) on how to install `docker` and `docker-compose`
+
+## Running the container
+
+```bash
+mkdir littlelink-server
+cd littlelink-server
+touch docker-compose.yml
+```
+
+If you're using Docker compose (see the [GitHub repo](https://github.com/timothystewart6/littlelink-server) for the latest file)
+
+`docker-compose.yml`
+
+```yml
+---
+version: '3'
+services:
+  little-link:
+    image: ghcr.io/timothystewart6/littlelink-server:latest
+    container_name: littlelink-server
+    environment:
+      - META_TITLE=Techno Tim
+      - META_DESCRIPTION=Techno Tim Link page
+      - META_AUTHOR=Techno Tim
+      - THEME=Dark
+      - FAVICON_URL=https://pbs.twimg.com/profile_images/1286144221217316864/qIAsKOpB_200x200.jpg
+      - AVATAR_URL=https://pbs.twimg.com/profile_images/1286144221217316864/qIAsKOpB_200x200.jpg
+      - AVATAR_2X_URL=https://pbs.twimg.com/profile_images/1286144221217316864/qIAsKOpB_400x400.jpg
+      - AVATAR_ALT=Techno Tim Profile Pic
+      - NAME=TechnoTim
+      - BIO=Hey! Just a place where you can connect with me!
+      - GITHUB=https://l.technotim.com/github
+      - TWITTER=https://l.technotim.com/twitter
+      - INSTAGRAM=https://l.technotim.com/instagram
+      - YOUTUBE=https://l.technotim.com/subscribe
+      - TWITCH=https://l.technotim.com/twitch/
+      - DISCORD=https://l.technotim.com/discord
+      - TIKTOK=https://l.technotim.com/tiktok
+      - KIT=https://l.technotim.com/gear
+      # - FACEBOOK=https://facebook.com
+      # - FACEBOOK_MESSENGER=https://facebook.com
+      # - LINKED_IN=https://linkedin.com
+      # - PRODUCT_HUNT=https://www.producthunt.com/
+      # - SNAPCHAT=https://www.snapchat.com/
+      # - SPOTIFY=https://www.spotify.com/
+      # - REDDIT=https://www.reddit.com/
+      # - MEDIUM=https://medium.com
+      # - PINTEREST=https://www.pinterest.com/
+      # - EMAIL=you@example.com
+      # - EMAIL_ALT=you@example.com
+      # - SOUND_CLOUD=https://souncloud.com
+      # - FIGMA=https://figma.com
+      # - TELEGRAM=https://telegram.org/
+      # - TUMBLR=https://www.tumblr.com/
+      # - STEAM=https://steamcommunity.com/
+      # - VIMEO=https://vimeo.com/
+      # - WORDPRESS=https://wordpress.com/
+      # - GOODREADS=https://www.goodreads.com/
+      # - SKOOB=https://www.skoob.com.br/
+      - FOOTER=Thanks for stopping by!
+    ports:
+      - 8080:3000
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+```
+
+If you're running docker only
+
+Docker command
+
+```bash
+docker run -d \
+  --name=littlelink-server \
+  -p 8080:3000 \
+  -e META_TITLE='Techno Tim' \
+  -e META_DESCRIPTION='Techno Tim Link page' \
+  -e META_AUTHOR='Techno Tim' \
+  -e THEME='Dark' \
+  -e FAVICON_URL='https://pbs.twimg.com/profile_images/1286144221217316864/qIAsKOpB_200x200.jpg' \
+  -e AVATAR_URL='https://pbs.twimg.com/profile_images/1286144221217316864/qIAsKOpB_200x200.jpg' \
+  -e AVATAR_2X_URL='https://pbs.twimg.com/profile_images/1286144221217316864/qIAsKOpB_400x400.jpg' \
+  -e AVATAR_ALT='Techno Tim Profile Pic' \
+  -e NAME='TechnoTim' \
+  -e BIO='Hey! Just a place where you can connect with me!' \
+  -e GITHUB='https://l.technotim.com/github' \
+  -e TWITTER='https://l.technotim.com/twitter' \
+  -e INSTAGRAM='https://l.technotim.com/instagram' \
+  -e YOUTUBE='https://l.technotim.com/subscribe' \
+  -e TWITCH='https://l.technotim.com/twitch' \
+  -e DISCORD='https://l.technotim.com/discord' \
+  -e TIKTOK='https://l.technotim.com/tiktok' \
+  -e KIT='https://l.technotim.com/gear' \
+  --restart unless-stopped \
+  ghcr.io/timothystewart6/littlelink-server:latest
+```
+
+If you're using Rancher, Portainer, Open Media Vault, Unraid, or anything else with a GUI, just copy and paste the environment variables above into the form on the web page.
+
+## Links
+
+🛍️ Check out the new Merch Shop at <https://l.technotim.com/shop>
+
+⚙️ See all the hardware I recommend at <https://l.technotim.com/gear>
+
+🚀 Don't forget to check out the [🚀Launchpad repo](https://l.technotim.com/quick-start) with all of the quick start source files

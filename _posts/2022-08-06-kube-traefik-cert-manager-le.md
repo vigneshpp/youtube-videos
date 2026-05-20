@@ -1,0 +1,362 @@
+---
+layout: post
+title: "Wildcard Certificates with Traefik + cert-manager + Let's Encrypt in Kubernetes Tutorial"
+date: 2022-08-06 09:00:00 -0500
+categories: kubernetes
+tags: kubernetes traefik cert-manager k3s cloudflare letsencrypt
+image:
+  path: /assets/img/headers/certificate-desk.webp
+  lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAUACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APs79nD/AIJ0/Bz9lT42N8TvDWteJ/Euhy6Dr+mXvw41p7E+HdfttRvtZ8WRXPie4ng1C41TVNG8R6nqeo6Fe2UWkJpy3QtPs09vGyy/nH9uVKdahRp4ePs+WnKbqTcq03CE48rqUYUIxp8lOCSVPnTTbqSu0/0B5LTq0qtSpWn7SMqsYRpwSoQVSaqOXsa0sRJ1HOU226vs2pWjSi4xa/AeP4K6t4ljj8R3Os/DpLnxAi63cI/whtLh0n1VRfyq9wfF0RndZJ2DTGOMykFyibto46+b14V60V7S0atSK/eR2U2lvSb6dW33b3Oqhk2FnQozlTouUqVOUm6dW7coJtvlxEY3bd3yxiuyS0P/2Q==
+
+---
+
+Traefik, cert-manager, Cloudflare, and Let's Encrypt are a winning combination when it comes to securing your services with certificates in Kubernetes.Today, we'll install and configure Traefik, the cloud native proxy and load balancer, as our Kubernetes Ingress Controller.We'll then install and configure cert-manager  to manage certificates for our cluster.We'll set up Let's Encrypt as our Cluster Issuer so that cert-manager can automatically provision TLS certificates and even wildcard certificates using Cloudflare DNS challenge absolutely free.We'll walk through all of this, step by step, so you can help secure your cluster today.
+
+{% include embed/youtube.html id='G4CmbYL9UPg' %}
+📺 [Watch Video](https://www.youtube.com/watch?v=G4CmbYL9UPg)
+
+A HUGE thanks to Datree for sponsoring this video!
+
+Combat misconfigurations. Empower engineers.
+
+<https://www.datree.io>
+
+## Getting Started
+
+If you need to install a new kubernetes cluster you can use my [Ansible Playbook](/posts/k3s-etcd-ansible/) to install one.
+
+## Resources
+
+> You can find all of the resources for this tutorial [here](https://github.com/timothystewart6/tree/master/kubernetes/traefik-cert-manager)
+{: .prompt-info }
+
+### Helm
+
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+For other ways to install Helm see the installation docs [here](https://helm.sh/docs/intro/install)
+
+## Installing
+
+Verify you can communicate with your cluster
+
+```bash
+kubectl get nodes
+```
+
+You should see
+
+```console
+NAME     STATUS   ROLES                       AGE   VERSION
+k3s-01   Ready    control-plane,etcd,master   10h   v1.23.4+k3s1
+k3s-02   Ready    control-plane,etcd,master   10h   v1.23.4+k3s1
+k3s-03   Ready    control-plane,etcd,master   10h   v1.23.4+k3s1
+k3s-04   Ready    <none>                      10h   v1.23.4+k3s1
+k3s-05   Ready    <none>                      10h   v1.23.4+k3s1
+```
+
+Verify helm is installed
+
+```bash
+helm version
+```
+
+You should see
+
+```console
+version.BuildInfo{Version:"v3.8.0", GitCommit:"d14138609b01886f544b2025f5000351c9eb092e", GitTreeState:"clean", GoVersion:"go1.17.5"}
+```
+
+## Traefik
+
+> These [resources](https://github.com/timothystewart6/tree/master/kubernetes/traefik-cert-manager) are in the `launchpad/kubernetes/traefik-cert-manager/traefik/` folder
+{: .prompt-info }
+
+Add repo
+
+```bash
+helm repo add traefik https://helm.traefik.io/traefik
+```
+
+Update repo
+
+```bash
+helm repo update
+```
+
+Create our namespace
+
+```bash
+kubectl create namespace traefik
+```
+
+Get all namespaces
+
+```bash
+kubectl get namespaces
+```
+
+We should see
+
+```console
+NAME              STATUS   AGE
+default           Active   21h
+kube-node-lease   Active   21h
+kube-public       Active   21h
+kube-system       Active   21h
+metallb-system    Active   21h
+traefik           Active   12s
+```
+
+Install traefik
+
+```bash
+helm install --namespace=traefik traefik traefik/traefik --values=values.yaml
+```
+
+Check the status of the traefik ingress controller service
+
+```bash
+kubectl get svc --all-namespaces -o wide
+```
+
+We should see traefik with the specified IP
+
+```console
+NAMESPACE        NAME              TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                      AGE   SELECTOR
+default          kubernetes        ClusterIP      10.43.0.1       <none>          443/TCP                      16h   <none>
+kube-system      kube-dns          ClusterIP      10.43.0.10      <none>          53/UDP,53/TCP,9153/TCP       16h   k8s-app=kube-dns
+kube-system      metrics-server    ClusterIP      10.43.182.24    <none>          443/TCP                      16h   k8s-app=metrics-server
+metallb-system   webhook-service   ClusterIP      10.43.205.142   <none>          443/TCP                      16h   component=controller
+traefik          traefik           LoadBalancer   10.43.156.161   192.168.30.80   80:30358/TCP,443:31265/TCP   22s   app.kubernetes.io/instance=traefik,app.kubernetes.io/name=traefik
+```
+
+Get all pods in `traefik` namespace
+
+```bash
+kubectl get pods --namespace traefik
+```
+
+We should see pods in the `traefik` namespace
+
+```console
+NAME                       READY   STATUS    RESTARTS   AGE
+traefik-76474c4d47-l5z74   1/1     Running   0          11m
+traefik-76474c4d47-xb282   1/1     Running   0          11m
+traefik-76474c4d47-xx5lw   1/1     Running   0          11m
+```
+
+### middleware
+
+Apply middleware
+
+```bash
+kubectl apply -f default-headers.yaml
+```
+
+Get middleware
+
+```bash
+kubectl get middleware
+```
+
+We should see our headers
+
+```console
+NAME              AGE
+default-headers   25s
+```
+
+### dashboard
+
+Install `htpassword`
+
+```bash
+sudo apt-get update
+sudo apt-get install apache2-utils
+```
+
+Generate a credential / password that's base64 encoded
+
+```bash
+htpasswd -nb techno password | openssl base64
+```
+
+Apply secret
+
+```bash
+kubectl apply -f secret-dashboard.yaml
+```
+
+Get secret
+
+```bash
+kubectl get secrets --namespace traefik
+```
+
+Apply middleware
+
+```bash
+kubectl apply -f middleware.yaml
+```
+
+Apply dashboard
+
+```bash
+kubectl apply -f ingress.yaml
+```
+
+Visit `https://traefik.local.example.com`
+
+## Sample Workload
+
+> These [resources](https://github.com/timothystewart6/tree/master/kubernetes/traefik-cert-manager) are in the `launchpad/kubernetes/traefik-cert-manager/nginx/` folder
+{: .prompt-info }
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+```
+
+Or you can apply an entire folder at once!
+
+```bash
+kubectl apply -f nginx
+```
+
+## cert-manager
+
+> These [resources](https://github.com/timothystewart6/tree/master/kubernetes/traefik-cert-manager) are in the `launchpad/kubernetes/traefik-cert-manager/cert-manager/` folder
+{: .prompt-info }
+
+Add repo
+
+```bash
+helm repo add jetstack https://charts.jetstack.io
+```
+
+Update it
+
+```bash
+helm repo update
+```
+
+Create our namespace
+
+```bash
+kubectl create namespace cert-manager
+```
+
+Get all namespaces
+
+```bash
+kubectl get namespaces
+```
+
+We should see
+
+```console
+NAME              STATUS   AGE
+cert-manager      Active   12s
+default           Active   21h
+kube-node-lease   Active   21h
+kube-public       Active   21h
+kube-system       Active   21h
+metallb-system    Active   21h
+traefik           Active   4h35m
+```
+
+Apply crds
+
+> *Note: Be sure to change this to the [latest version](https://cert-manager.io/docs/installation/supported-releases/) of `cert-manager`*
+{: .prompt-info }
+
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.crds.yaml
+```
+
+Install with helm
+
+```bash
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --values=values.yaml --version v1.9.1
+```
+
+Apply secrets
+
+> Be sure to generate the correct token if using Cloudflare.This is using an [API Token](https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/#api-tokens) and not a global key.
+{: .prompt-info }
+
+From `issuers` folder
+
+```bash
+kubectl apply -f secret-cf-token.yaml
+```
+
+Apply staging `ClusterIssuer`
+
+From `issuers` folder
+
+```bash
+kubectl apply -f letsencrypt-staging.yaml
+```
+
+Create certs
+
+### staging
+
+From `certificates/staging` folder
+
+```bash
+kubectl apply -f local-example-com.yaml
+```
+
+Check the logs
+
+```bash
+kubectl logs -n cert-manager -f cert-manager-877fd747c-fjwhp
+```
+
+Get `challenges`
+
+```bash
+kubectl get challenges
+```
+
+Get more details
+
+```bash
+kubectl describe order local-technotim-live-frm2z-1836084675
+```
+
+### production
+
+Apply production `ClusterIssuer`
+
+From `issuers` folder
+
+```bash
+kubectl apply -f letsencrypt-production.yaml
+```
+
+From `certificates/production` folder
+
+```bash
+kubectl apply -f local-example-com.yaml
+```
+
+## Learn More
+
+If you're using `cert-manager` to manage certificates, you might want to check out this post on how to  [mirror your Kubernetes configs, secrets, and resources to other namespaces](/posts/k8s-reflector/).  This is helpful when you need to share you secrets / certificates across namespaces!
+
+## Links
+
+🛍️ Check out the new Merch Shop at <https://l.technotim.com/shop>
+
+⚙️ See all the hardware I recommend at <https://l.technotim.com/gear>
+
+🚀 Don't forget to check out the [🚀Launchpad repo](https://l.technotim.com/quick-start) with all of the quick start source files
